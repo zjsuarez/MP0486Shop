@@ -6,8 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import model.Employee;
+import model.Product;
 
 public class DaoImplJDBC implements Dao {
 	Connection connection;
@@ -60,6 +62,14 @@ public class DaoImplJDBC implements Dao {
 			e.printStackTrace();
 		}
     	return employee;
+	}
+	
+	public ArrayList<Product> getInventory(){
+		return new ArrayList<Product>();
+	}
+	
+	public boolean writeInventory(ArrayList<Product> productlist) {
+		return true;
 	}
 
 }

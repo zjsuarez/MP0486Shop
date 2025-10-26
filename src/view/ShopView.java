@@ -6,10 +6,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import dao.DaoImplFile;
 import main.Shop;
 import utils.Constants;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 
@@ -29,8 +31,9 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 	private JButton btnShowCash;
 	private JButton btnAddProduct;
 	private JButton btnAddStock;
+	private JButton btnExportInventory;
 	private JButton btnRemoveProduct;
-	
+	private JButton btnViewInventory;
 	
 	
 
@@ -85,11 +88,20 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 		lblShowCash.setBounds(57, 20, 236, 14);
 		contentPane.add(lblShowCash);
 		
+		// option export inventory
+		btnExportInventory = new JButton("0. Export Inventory");
+		btnExportInventory.setHorizontalAlignment(SwingConstants.LEFT);
+		btnExportInventory.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnExportInventory.setBounds(99, 40, 236, 40);
+		contentPane.add(btnExportInventory);
+		// listen button
+		btnExportInventory.addActionListener(this);
+		
 		// option count cash
 		btnShowCash = new JButton("1. Contar caja");
 		btnShowCash.setHorizontalAlignment(SwingConstants.LEFT);
 		btnShowCash.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		btnShowCash.setBounds(99, 40, 236, 40);
+		btnShowCash.setBounds(99, 90, 236, 40);
 		contentPane.add(btnShowCash);
 		// listen button
 		btnShowCash.addActionListener(this);
@@ -98,7 +110,7 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 		btnAddProduct = new JButton("2. Añadir producto");
 		btnAddProduct.setHorizontalAlignment(SwingConstants.LEFT);
 		btnAddProduct.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		btnAddProduct.setBounds(99, 90, 236, 40);
+		btnAddProduct.setBounds(99, 140, 236, 40);
 		contentPane.add(btnAddProduct);
 		// listen button
 		btnAddProduct.addActionListener(this);
@@ -107,16 +119,25 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 		btnAddStock = new JButton("3. Añadir stock");
 		btnAddStock.setHorizontalAlignment(SwingConstants.LEFT);
 		btnAddStock.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		btnAddStock.setBounds(99, 140, 236, 40);
+		btnAddStock.setBounds(99, 190, 236, 40);
 		contentPane.add(btnAddStock);
 		// listen button
 		btnAddStock.addActionListener(this);
+		
+		// option View inventory
+		btnViewInventory = new JButton("4. View Inventory");
+		btnViewInventory.setHorizontalAlignment(SwingConstants.LEFT);
+		btnViewInventory.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnViewInventory.setBounds(99, 240, 236, 40);
+		contentPane.add(btnViewInventory);
+		// listen button
+		btnViewInventory.addActionListener(this);
 
 		// option add product
 		btnRemoveProduct = new JButton("9. Eliminar producto");
 		btnRemoveProduct.setHorizontalAlignment(SwingConstants.LEFT);
 		btnRemoveProduct.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		btnRemoveProduct.setBounds(99, 190, 236, 40);
+		btnRemoveProduct.setBounds(99, 290, 236, 40);
 		contentPane.add(btnRemoveProduct);
 		// listen button
 		btnRemoveProduct.addActionListener(this);
@@ -132,6 +153,9 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
+		if (e.getKeyChar() == '0' ) {
+			this.exportInventory();	
+        }
 		if (e.getKeyChar() == '1' ) {
 			this.openCashView();	
         }
@@ -140,6 +164,9 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 		}
 		if (e.getKeyChar() == '3') {
 			this.openProductView(Constants.OPTION_ADD_STOCK);
+		}
+		if (e.getKeyChar() == '4') {
+			this.viewShop();
 		}
 		if (e.getKeyChar() == '9') {
 			this.openProductView(Constants.OPTION_REMOVE_PRODUCT);
@@ -167,6 +194,40 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 		}
 		if (e.getSource() == btnRemoveProduct) {
 			this.openProductView(Constants.OPTION_REMOVE_PRODUCT);				
+		}
+		if (e.getSource() == btnExportInventory) {
+			this.exportInventory();				
+		}
+		if (e.getSource() == btnViewInventory ) {
+			this.viewShop();				
+		}
+		
+	}
+	
+	/**
+	 * method to View Inventory
+	 */
+	public void viewShop() {
+		ListView listview = new ListView(shop);
+		listview.setVisible(true);
+	}
+	
+	
+	
+	/**
+	 * method to export inventory
+	 */
+	public void exportInventory() {
+		if(shop.exportInventory()){
+			JOptionPane.showMessageDialog(this,
+		            "Exportación completada correctamente.",
+		            "Éxito",
+		            JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			JOptionPane.showMessageDialog(this,
+		            "Error al exportar: No se pudo escribir el archivo.",
+		            "Error",
+		            JOptionPane.ERROR_MESSAGE);
 		}
 		
 	}

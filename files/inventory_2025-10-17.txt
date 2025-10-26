@@ -1,0 +1,3 @@
+Product:Manzana;Wholesaler Price:10.0;Stock:10;
+Total number of products:2Product:Fresa;Wholesaler Price:5.0;Stock:20;
+Total number of products:2

@@ -20,6 +20,10 @@ public class Amount {
 	public void setValue(double value) {
 		this.value = value;
 	}
+	
+	public double toNormal() {
+		return this.value;
+	}
 
 	@Override
 	public String toString() {
