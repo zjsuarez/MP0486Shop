@@ -209,6 +209,7 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 	 */
 	public void viewShop() {
 		ListView listview = new ListView(shop);
+		listview.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		listview.setVisible(true);
 	}
 	
@@ -225,7 +226,7 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 		            JOptionPane.INFORMATION_MESSAGE);
 		} else {
 			JOptionPane.showMessageDialog(this,
-		            "Error al exportar: No se pudo escribir el archivo.",
+		            "Error al exportar: No se pudo exportar el inventario.",
 		            "Error",
 		            JOptionPane.ERROR_MESSAGE);
 		}

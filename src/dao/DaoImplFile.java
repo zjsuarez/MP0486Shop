@@ -14,7 +14,7 @@ import java.util.Iterator;
 import model.Amount;
 import model.Product;
 
-public class DaoImplFile implements Dao{
+public class DaoImplFile{
 	
 	
 	public ArrayList<Product> getInventory(){
@@ -67,7 +67,7 @@ public class DaoImplFile implements Dao{
 							}
 						}
 						// add product to inventory
-						lista.add(new Product(name, new Amount(wholesalerPrice), true, stock));
+						//lista.add(new Product(name, new Amount(wholesalerPrice), true, stock));
 						
 						// read next line
 						line = br.readLine();

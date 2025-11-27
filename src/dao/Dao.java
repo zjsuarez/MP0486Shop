@@ -7,17 +7,20 @@ import model.Product;
 
 public interface Dao {
 	
-	default public void connect() {
-	}
+	public void connect();
 
-	default public void disconnect() {
-	}
+	public void disconnect();
 	
 	public ArrayList<Product> getInventory();
 	
 	public boolean writeInventory(ArrayList<Product> productlist);
 
-	default public Employee getEmployee(int employeeId, String password) {
-		return null;
-	}
+	public Employee getEmployee(int employeeId, String password);
+	
+	public boolean addProduct(Product product);
+	
+	public boolean updateProduct(Product product);
+	
+	public boolean deleteProduct(int id);
+	
 }

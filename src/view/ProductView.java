@@ -159,13 +159,23 @@ public class ProductView extends JDialog implements ActionListener{
 							JOptionPane.ERROR_MESSAGE);
 					
 				} else {
-					product = new Product(textFieldName.getText(), 
-							new Amount(Double.parseDouble(textFieldPrice.getText())) ,
-							true,
-							Integer.parseInt(textFieldStock.getText()));
-					shop.addProduct(product);
+					try {
+						product = new Product(0,textFieldName.getText(), 
+								new Amount(Double.parseDouble(textFieldPrice.getText())) ,
+								true,
+								Integer.parseInt(textFieldStock.getText()));
+					} catch(Exception e1){
+						JOptionPane.showMessageDialog(null, "ERROR AL AÑADIR. CAMPOS INVÁLIDOS", "Information",
+								JOptionPane.WARNING_MESSAGE);
+					}
+					
+					if(shop.addProduct(product)) {
 					JOptionPane.showMessageDialog(null, "Producto añadido ", "Information",
 							JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						JOptionPane.showMessageDialog(null, "ERROR AL AÑADIR ", "Information",
+								JOptionPane.WARNING_MESSAGE);
+					}
 					// release current screen
 					dispose();	
 				}
@@ -180,11 +190,24 @@ public class ProductView extends JDialog implements ActionListener{
 					JOptionPane.showMessageDialog(null, "Producto no existe ", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					
-				} else {					
-					product.setStock(product.getStock() + Integer.parseInt(textFieldStock.getText()));
+				} else {
+					
+					
+					try {
+						int newStock = product.getStock() + Integer.parseInt(textFieldStock.getText());
+						Product newProduct = new Product(product.getId(),product.getName(),product.getWholesalerPrice(),product.isAvailable(),newStock);
+						shop.updateStock(newProduct);
+					} catch(Exception e2) {
+						JOptionPane.showMessageDialog(null, "Formato inválido ", "Error",
+								JOptionPane.ERROR_MESSAGE);
+						break;
+					}
+					
+					
+					
 					JOptionPane.showMessageDialog(null, "Stock actualizado ", "Information",
 							JOptionPane.INFORMATION_MESSAGE);
-					// release current screen
+
 					dispose();	
 				}
 				
@@ -199,7 +222,7 @@ public class ProductView extends JDialog implements ActionListener{
 							JOptionPane.ERROR_MESSAGE);
 					
 				} else {					
-					shop.getInventory().remove(product);
+					shop.removeProduct(product);
 					JOptionPane.showMessageDialog(null, "Producto eliminado", "Information",
 							JOptionPane.INFORMATION_MESSAGE);
 					// release current screen

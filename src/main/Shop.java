@@ -24,7 +24,7 @@ import dao.DaoImplJDBC;
 public class Shop {
 	private Amount cash = new Amount(100.00);
 //	private Product[] inventory;
-	private ArrayList<Product> inventory;
+	
 	private int numberProducts;
 //	private Sale[] sales;
 	private ArrayList<Sale> sales;
@@ -32,11 +32,13 @@ public class Shop {
 
 	final static double TAX_RATE = 1.04;
 	
-	private Dao dao = new DaoImplFile();
+	private Dao dao = new DaoImplJDBC();
+	private ArrayList<Product> inventory= dao.getInventory();
 
 	public Shop() {
 		inventory = new ArrayList<Product>();
 		sales = new ArrayList<Sale>();
+		dao.connect();
 	}
 	
 	
@@ -54,6 +56,7 @@ public class Shop {
 
 
 	public ArrayList<Product> getInventory() {
+		this.readInventory();
 		return inventory;
 	}
 
@@ -230,7 +233,7 @@ public class Shop {
 	 * Export inventory to file
 	 */
 	public boolean exportInventory() {
-		
+		this.readInventory();
 		if(dao.writeInventory(inventory)) {
 			System.out.println("Inventario exportado");
 			return true;
@@ -264,7 +267,7 @@ public class Shop {
 		System.out.print("Stock: ");
 		int stock = scanner.nextInt();
 
-		addProduct(new Product(name, new Amount(wholesalerPrice), true, stock));
+		//addProduct(new Product(name, new Amount(wholesalerPrice), true, stock));
 	}
 
 	/**
@@ -500,13 +503,14 @@ public class Shop {
 	 * 
 	 * @param product
 	 */
-	public void addProduct(Product product) {
+	public boolean addProduct(Product product) {
 		if (isInventoryFull()) {
 			System.out.println("No se pueden añadir más productos, se ha alcanzado el máximo de " + inventory.size());
-			return;
+			return false;
 		}
-		inventory.add(product);
 		numberProducts++;
+		return dao.addProduct(product);
+		
 	}
 	
 	
@@ -529,6 +533,7 @@ public class Shop {
 	 * @param product name
 	 */
 	public Product findProduct(String name) {
+		this.readInventory();
 		for (int i = 0; i < inventory.size(); i++) {
 			if (inventory.get(i) != null && inventory.get(i).getName().equalsIgnoreCase(name)) {
 				return inventory.get(i);
@@ -536,6 +541,14 @@ public class Shop {
 		}
 		return null;
 
+	}
+	
+	public boolean removeProduct(Product product) {
+		return dao.deleteProduct(product.getId());
+	}
+	
+	public boolean updateStock(Product product) {
+		return dao.updateProduct(product);
 	}
 
 }
