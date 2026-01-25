@@ -98,7 +98,7 @@ public class DaoImplFile{
 			
 			for (int i = 0; i < productlist.size(); i++) {
 				writer.write("Product:"+productlist.get(i).getName()+";");
-				writer.write("Wholesaler Price:"+productlist.get(i).getWholesalerPrice().toNormal()+";");
+				writer.write("Wholesaler Price:"+productlist.get(i).getWholesalerPrice()+";");
 				writer.write("Stock:"+productlist.get(i).getStock()+";");
 				writer.newLine();
 				writer.write("Total number of products:"+productlist.size());

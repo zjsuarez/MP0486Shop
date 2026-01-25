@@ -19,6 +19,7 @@ import java.util.Scanner;
 
 import dao.Dao;
 import dao.DaoImplFile;
+import dao.DaoImplHibernate;
 import dao.DaoImplJDBC;
 
 public class Shop {
@@ -32,7 +33,7 @@ public class Shop {
 
 	final static double TAX_RATE = 1.04;
 	
-	private Dao dao = new DaoImplJDBC();
+	private Dao dao = new DaoImplHibernate();
 	private ArrayList<Product> inventory= dao.getInventory();
 
 	public Shop() {
@@ -375,7 +376,7 @@ public class Shop {
 
 			if (product != null && product.isAvailable()) {
 				productAvailable = true;
-				totalAmount.setValue(totalAmount.getValue() + product.getPublicPrice().getValue());
+				totalAmount.setValue(totalAmount.getValue() + product.getPublicPrice());
 				product.setStock(product.getStock() - 1);
 				shoppingCart.add(product);
 				numberShopping++;
@@ -505,11 +506,22 @@ public class Shop {
 	 */
 	public boolean addProduct(Product product) {
 		if (isInventoryFull()) {
-			System.out.println("No se pueden añadir más productos, se ha alcanzado el máximo de " + inventory.size());
-			return false;
-		}
-		numberProducts++;
-		return dao.addProduct(product);
+	        System.out.println("No se pueden añadir más productos, se ha alcanzado el máximo de " + inventory.size());
+	        return false;
+	    }
+
+	    try {
+	        // Llamamos al método void. Si falla, saltará al catch.
+	        dao.addProduct(product);
+	        
+	        // Si llegamos aquí, Hibernate guardó bien
+	        numberProducts++; 
+	        return true;
+	        
+	    } catch (Exception e) {
+	        System.err.println("Error al guardar en base de datos: " + e.getMessage());
+	        return false;
+	    }
 		
 	}
 	
@@ -544,11 +556,26 @@ public class Shop {
 	}
 	
 	public boolean removeProduct(Product product) {
-		return dao.deleteProduct(product.getId());
+		try {
+	        dao.deleteProduct(product.getId());
+	        return true;
+	        
+	    } catch (Exception e) {
+	        System.err.println("Error al eliminar producto: " + e.getMessage());
+	        return false;
+	    }
 	}
 	
-	public boolean updateStock(Product product) {
-		return dao.updateProduct(product);
+	public boolean updateProduct(Product product) {
+		try {
+	        // Llamamos al DAO para que guarde los cambios en la BD
+	        dao.updateProduct(product);
+	        return true;
+	        
+	    } catch (Exception e) {
+	        System.err.println("Error al actualizar stock: " + e.getMessage());
+	        return false;
+	    }
 	}
 
 }

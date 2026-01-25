@@ -17,6 +17,7 @@ public class DaoImplJDBC implements Dao {
 
 	@Override
 	public void connect() {
+		System.out.println("Aa");
 		// Define connection parameters
 		String url = "jdbc:mysql://localhost:3306/shop";
 		String user = "root";
@@ -24,7 +25,7 @@ public class DaoImplJDBC implements Dao {
 		try {
 			this.connection = DriverManager.getConnection(url, user, pass);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -75,7 +76,7 @@ public class DaoImplJDBC implements Dao {
 		    while(rs.next()) {
 		    	boolean availablefield = rs.getInt("available") == 1;
 
-		    	Product product = new Product(rs.getInt("id"),rs.getString("name"),new Amount(rs.getDouble("wholesalerPrice")),availablefield,rs.getInt("stock"));
+		    	Product product = new Product(rs.getInt("id"),rs.getString("name"),rs.getDouble("wholesalerPrice"),availablefield,rs.getInt("stock"));
 		    	products.add(product);
 		    }
 		    
@@ -97,7 +98,7 @@ public class DaoImplJDBC implements Dao {
 				int availablefield = product.isAvailable() ? 1 : 0;
 				ps.setInt(1,product.getId());
 	    		ps.setString(2,product.getName());
-	    	  	ps.setDouble(3,product.getWholesalerPrice().getValue());
+	    	  	ps.setDouble(3,product.getWholesalerPrice());
 	    	  	ps.setInt(4,availablefield);
 	    	  	ps.setInt(5, product.getStock());
 	    	  	if(ps.executeUpdate()>0) {
@@ -105,6 +106,7 @@ public class DaoImplJDBC implements Dao {
 	    	  	}
 			}
 			return rows>0;
+	
 		
         } catch (SQLException e) {
 			// in case error in SQL
@@ -114,28 +116,28 @@ public class DaoImplJDBC implements Dao {
 	}
 
 
-	public boolean addProduct(Product product) {
+	public void addProduct(Product product) {
 		String query = "insert into inventory(name,wholesalerPrice,available,stock) values(?,?,?,?)";
 		try (PreparedStatement ps = connection.prepareStatement(query)) { 
 			int availablefield = product.isAvailable() ? 1 : 0;
 			
     		ps.setString(1,product.getName());
-    	  	ps.setDouble(2,product.getWholesalerPrice().getValue());
+    	  	ps.setDouble(2,product.getWholesalerPrice());
     	  	ps.setInt(3,availablefield);
     	  	ps.setInt(4, product.getStock());
     	  	int rows = ps.executeUpdate();              
 
-            return rows > 0;
+
             
         } catch (SQLException e) {
 			// in case error in SQL
 			e.printStackTrace();
-			return false;
+
 		}
 	}
 
 
-	public boolean updateProduct(Product product) {
+	public void updateProduct(Product product) {
 		String query = "UPDATE inventory "
 	             + "SET name = ?, "
 	             + "wholesalerPrice = ?, "
@@ -144,33 +146,32 @@ public class DaoImplJDBC implements Dao {
 	             + "WHERE id = ?";
 		try (PreparedStatement ps = connection.prepareStatement(query)) { 
     		ps.setString(1,product.getName());
-    		ps.setDouble(2,product.getWholesalerPrice().getValue());
+    		ps.setDouble(2,product.getWholesalerPrice());
     		int availablefield = product.isAvailable() ? 1 : 0;
     		ps.setInt(3,availablefield);
     		ps.setInt(4,product.getStock());
     		ps.setInt(5, product.getId());
     		int rows = ps.executeUpdate();              
 
-            return rows > 0;
         } catch (SQLException e) {
 			// in case error in SQL
 			e.printStackTrace();
-			return false;
+
 		}
 	}
 
 	
-	public boolean deleteProduct(int id) {
+	public void deleteProduct(int id) {
 		String query = "delete from inventory where id = ?";
 		try (PreparedStatement ps = connection.prepareStatement(query)) { 
     		ps.setInt(1,id);
     		int rows = ps.executeUpdate();              
 
-            return rows > 0;
+
         } catch (SQLException e) {
 			// in case error in SQL
 			e.printStackTrace();
-			return false;
+
 		}
 	}
 	

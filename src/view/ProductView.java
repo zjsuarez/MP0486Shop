@@ -159,77 +159,86 @@ public class ProductView extends JDialog implements ActionListener{
 							JOptionPane.ERROR_MESSAGE);
 					
 				} else {
-					try {
-						product = new Product(0,textFieldName.getText(), 
-								new Amount(Double.parseDouble(textFieldPrice.getText())) ,
-								true,
-								Integer.parseInt(textFieldStock.getText()));
-					} catch(Exception e1){
-						JOptionPane.showMessageDialog(null, "ERROR AL AÑADIR. CAMPOS INVÁLIDOS", "Information",
-								JOptionPane.WARNING_MESSAGE);
-					}
-					
-					if(shop.addProduct(product)) {
-					JOptionPane.showMessageDialog(null, "Producto añadido ", "Information",
-							JOptionPane.INFORMATION_MESSAGE);
-					} else {
-						JOptionPane.showMessageDialog(null, "ERROR AL AÑADIR ", "Information",
-								JOptionPane.WARNING_MESSAGE);
-					}
-					// release current screen
-					dispose();	
-				}
+						try {
+							product = new Product(0,textFieldName.getText(), 
+									Double.parseDouble(textFieldPrice.getText()) ,
+									true,
+									Integer.parseInt(textFieldStock.getText()));
+		                    if (shop.addProduct(product)) {
+		                        JOptionPane.showMessageDialog(null, "Producto añadido ", "Information",
+		                                JOptionPane.INFORMATION_MESSAGE);
+		                        dispose(); 
+		                    } else {
+		                        JOptionPane.showMessageDialog(null, "ERROR AL AÑADIR: No se pudo guardar en BD", "Information",
+		                                JOptionPane.WARNING_MESSAGE);
+		                    }
+		                } catch (NumberFormatException ex) {
+		                    JOptionPane.showMessageDialog(null, "ERROR: El precio o stock deben ser números", "Error",
+		                            JOptionPane.ERROR_MESSAGE);
+		                } catch (Exception ex) {
+		                    JOptionPane.showMessageDialog(null, "ERROR DESCONOCIDO", "Error",
+		                            JOptionPane.ERROR_MESSAGE);
+		                    ex.printStackTrace();
+		                }
+		            }
 				
 				break;
 				
 			case Constants.OPTION_ADD_STOCK:
-				// check product exists
-				product = shop.findProduct(textFieldName.getText());
-				
-				if (product == null) {
-					JOptionPane.showMessageDialog(null, "Producto no existe ", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					
-				} else {
-					
-					
-					try {
-						int newStock = product.getStock() + Integer.parseInt(textFieldStock.getText());
-						Product newProduct = new Product(product.getId(),product.getName(),product.getWholesalerPrice(),product.isAvailable(),newStock);
-						shop.updateStock(newProduct);
-					} catch(Exception e2) {
-						JOptionPane.showMessageDialog(null, "Formato inválido ", "Error",
-								JOptionPane.ERROR_MESSAGE);
-						break;
-					}
-					
-					
-					
-					JOptionPane.showMessageDialog(null, "Stock actualizado ", "Information",
-							JOptionPane.INFORMATION_MESSAGE);
+			    product = shop.findProduct(textFieldName.getText());
+			    
+			    if (product == null) {
+			        JOptionPane.showMessageDialog(null, "Producto no existe ", "Error",
+			                JOptionPane.ERROR_MESSAGE);
+			        
+			    } else {
+			        try {
+			            int stockToAdd = Integer.parseInt(textFieldStock.getText());
+			            int currentStock = product.getStock();
+			            
+			            product.setStock(currentStock + stockToAdd);
+			            
+			            if (shop.updateProduct(product)) {
+			                JOptionPane.showMessageDialog(null, "Stock actualizado ", "Information",
+			                        JOptionPane.INFORMATION_MESSAGE);
+			                dispose(); 
+			            } else {
+			                JOptionPane.showMessageDialog(null, "Error al actualizar en BD", "Error",
+			                        JOptionPane.ERROR_MESSAGE);
+			            }
 
-					dispose();	
-				}
-				
-				break;
+			        } catch(NumberFormatException e2) {
+			            JOptionPane.showMessageDialog(null, "Formato inválido (solo números enteros)", "Error",
+			                    JOptionPane.ERROR_MESSAGE);
+			        } catch(Exception e3) {
+			             JOptionPane.showMessageDialog(null, "Ocurrió un error inesperado", "Error",
+			                    JOptionPane.ERROR_MESSAGE);
+			        }
+			    }
+			    break;
 				
 			case Constants.OPTION_REMOVE_PRODUCT:
-				// check product exists
-				product = shop.findProduct(textFieldName.getText());
-				
-				if (product == null) {
-					JOptionPane.showMessageDialog(null, "Producto no existe ", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					
-				} else {					
-					shop.removeProduct(product);
-					JOptionPane.showMessageDialog(null, "Producto eliminado", "Information",
-							JOptionPane.INFORMATION_MESSAGE);
-					// release current screen
-					dispose();	
-				}
-				
-				break;
+
+			    product = shop.findProduct(textFieldName.getText());
+			    
+			    if (product == null) {
+			        JOptionPane.showMessageDialog(null, "Producto no existe ", "Error",
+			                JOptionPane.ERROR_MESSAGE);
+			        
+			    } else {
+			        boolean eliminado = shop.removeProduct(product);
+			        
+			        if (eliminado) {
+			            JOptionPane.showMessageDialog(null, "Producto eliminado", "Information",
+			                    JOptionPane.INFORMATION_MESSAGE);
+			            dispose();  
+			        } else {
+			            JOptionPane.showMessageDialog(null, "Error al eliminar el producto de la base de datos", "Error",
+			                    JOptionPane.ERROR_MESSAGE);
+			        }
+			    }
+			    
+			    break;
 
 			default:
 				break;

@@ -1,22 +1,44 @@
 package model;
 
+import javax.persistence.Transient;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.PostLoad;
+@Entity
+@Table(name="inventory")
 public class Product {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
     private String name;
-    private Amount publicPrice;
-    private Amount wholesalerPrice;
+    
+    @Column(name = "price")
+    private double publicPrice;
+    
+    @Transient
+    private double wholesalerPrice;
+    
+    
     private boolean available;
     private int stock;
     private static int totalProducts;
-    
+     
     public final static double EXPIRATION_RATE=0.60;
     
-	public Product(int id, String name, Amount wholesalerPrice, boolean available, int stock) {
+    public Product() {
+	}
+    
+	public Product(int id, String name, double wholesalerPrice, boolean available, int stock) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.wholesalerPrice = wholesalerPrice;
-		this.publicPrice = new Amount(wholesalerPrice.getValue() * 2);
+		this.publicPrice = wholesalerPrice * 2;
 		this.available = available;
 		this.stock = stock;
 		totalProducts++;
@@ -38,21 +60,25 @@ public class Product {
 		this.name = name;
 	}
 
+	@PostLoad
+    private void calculateWholesalerPrice() {
+        this.wholesalerPrice = this.publicPrice / 2;
+    }
 	
 
-	public Amount getPublicPrice() {
+	public double getPublicPrice() {
 		return publicPrice;
 	}
 
-	public void setPublicPrice(Amount publicPrice) {
+	public void setPublicPrice(double publicPrice) {
 		this.publicPrice = publicPrice;
 	}
 
-	public Amount getWholesalerPrice() {
+	public double getWholesalerPrice() {
 		return wholesalerPrice;
 	}
 
-	public void setWholesalerPrice(Amount wholesalerPrice) {
+	public void setWholesalerPrice(double wholesalerPrice) {
 		this.wholesalerPrice = wholesalerPrice;
 	}
 
@@ -81,7 +107,7 @@ public class Product {
 	}
 	
 	public void expire() {
-		this.publicPrice.setValue(this.getPublicPrice().getValue()*EXPIRATION_RATE); ;
+		this.publicPrice = (this.getPublicPrice() *EXPIRATION_RATE); ;
 	}
 
 	@Override
