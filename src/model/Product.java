@@ -42,6 +42,7 @@ public class Product {
 		this.available = available;
 		this.stock = stock;
 		totalProducts++;
+		
 	}
 
 	public int getId() {
